@@ -1,46 +1,93 @@
 <template>
-  <div class="race-track">
-    <h3>Round {{ currentRound + 1 }} - {{ currentRaceData?.distance }}m</h3>
+  <div class="race-track" role="region" aria-labelledby="race-track-title">
+    <h3 id="race-track-title">Round {{ currentRound + 1 }} - {{ currentRaceData?.distance }}m</h3>
 
-    <div class="track-container">
-      <div class="track-header">
-        <div class="start-line">START</div>
-        <div class="finish-line">FINISH</div>
+    <div
+      class="track-container"
+      role="application"
+      aria-label="Live horse race visualization"
+      aria-describedby="race-instructions"
+    >
+      <div id="race-instructions" class="sr-only">
+        Horse race in progress. Use Tab to navigate between horses for details.
       </div>
 
-      <div class="lanes">
-        <div v-for="(horse, index) in currentRaceHorses" :key="horse.id" class="lane">
-          <div class="lane-number">{{ index + 1 }}</div>
-          <div class="track-surface">
+      <div class="track-header" role="presentation">
+        <div class="start-line" aria-label="Race start line">START</div>
+        <div class="finish-line" aria-label="Race finish line">FINISH</div>
+      </div>
+
+      <div class="lanes" role="list" aria-label="Race lanes with horse positions">
+        <div
+          v-for="(horse, index) in currentRaceHorses"
+          :key="horse.id"
+          class="lane"
+          role="listitem"
+          :tabindex="0"
+          :aria-label="getLaneDescription(horse, index)"
+          :aria-describedby="`horse-${horse.id}-race-details`"
+          @keydown="handleLaneKeydown"
+        >
+          <div class="lane-number" aria-hidden="true">{{ index + 1 }}</div>
+          <div
+            class="track-surface"
+            role="progressbar"
+            :aria-valuenow="horse.position"
+            :aria-valuemin="0"
+            :aria-valuemax="currentRaceData.distance"
+            :aria-label="`${horse.name} progress: ${Math.round((horse.position / currentRaceData.distance) * 100)}% complete`"
+          >
             <div
               class="horse"
               :style="{
                 left: `${(horse.position / currentRaceData.distance) * 100}%`
               }"
+              aria-hidden="true"
             >
               <div class="horse-circle" :style="{ backgroundColor: horse.color }">🐎</div>
             </div>
           </div>
-          <div class="horse-info" :class="getFinishPosition(horse)">
+          <div class="horse-info" :class="getFinishPosition(horse)" role="status">
             <span class="horse-name">{{ horse.name }}</span>
             <span class="horse-condition">{{ horse.condition }}</span>
+          </div>
+          <div :id="`horse-${horse.id}-race-details`" class="sr-only">
+            {{ getRaceStatusDescription(horse) }}
           </div>
         </div>
       </div>
 
-      <div class="progress-info">
-        <div class="distance-markers">
-          <div class="marker" style="left: 0%">0m</div>
-          <div class="marker" style="left: 25%">
+      <div class="progress-info" role="presentation">
+        <div class="distance-markers" aria-label="Distance markers for race track">
+          <div class="marker" style="left: 0%" aria-label="Start: 0 meters">0m</div>
+          <div
+            class="marker"
+            style="left: 25%"
+            :aria-label="`Quarter distance: ${Math.round(currentRaceData.distance * 0.25)} meters`"
+          >
             {{ Math.round(currentRaceData.distance * 0.25) }}m
           </div>
-          <div class="marker" style="left: 50%">
+          <div
+            class="marker"
+            style="left: 50%"
+            :aria-label="`Half distance: ${Math.round(currentRaceData.distance * 0.5)} meters`"
+          >
             {{ Math.round(currentRaceData.distance * 0.5) }}m
           </div>
-          <div class="marker" style="left: 75%">
+          <div
+            class="marker"
+            style="left: 75%"
+            :aria-label="`Three quarter distance: ${Math.round(currentRaceData.distance * 0.75)} meters`"
+          >
             {{ Math.round(currentRaceData.distance * 0.75) }}m
           </div>
-          <div class="marker" style="left: 100%">{{ currentRaceData.distance }}m</div>
+          <div
+            class="marker"
+            style="left: 100%"
+            :aria-label="`Finish: ${currentRaceData.distance} meters`"
+          >
+            {{ currentRaceData.distance }}m
+          </div>
         </div>
       </div>
     </div>
@@ -76,6 +123,36 @@ export default {
       if (finishIndex === 1) return 'second-place'
       if (finishIndex === 2) return 'third-place'
       return 'finished'
+    },
+    getLaneDescription(horse: Horse, index: number): string {
+      const progress = Math.round((horse.position / (this as any).currentRaceData.distance) * 100)
+      const status = this.getFinishPosition(horse)
+      let statusText = ''
+
+      if (status === 'first-place') statusText = ' - First place!'
+      else if (status === 'second-place') statusText = ' - Second place!'
+      else if (status === 'third-place') statusText = ' - Third place!'
+      else if (status === 'finished') statusText = ' - Finished race'
+      else statusText = ' - Racing'
+
+      return `Lane ${index + 1}: ${horse.name}, ${progress}% complete${statusText}`
+    },
+    getRaceStatusDescription(horse: Horse): string {
+      const progress = Math.round((horse.position / (this as any).currentRaceData.distance) * 100)
+      const position = `${horse.position} meters of ${(this as any).currentRaceData.distance} meters`
+      const status = this.getFinishPosition(horse)
+
+      if (status === 'first-place') return `${position}. Winner! First place finish.`
+      if (status === 'second-place') return `${position}. Second place finish.`
+      if (status === 'third-place') return `${position}. Third place finish.`
+      if (status === 'finished') return `${position}. Race completed.`
+      return `${position}. Currently racing at ${progress}% completion.`
+    },
+    handleLaneKeydown(event: KeyboardEvent): void {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        ;(event.target as HTMLElement).focus()
+      }
     }
   }
 }
@@ -271,5 +348,107 @@ export default {
   padding: 2px 6px;
   border-radius: 3px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for accessibility */
+.lane:focus {
+  outline: 3px solid #4a90e2;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+/* High contrast mode support */
+:global(body.high-contrast) .race-track {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .track-container {
+  background: #000000;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .lane {
+  background-color: #000000;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .lane:focus {
+  outline: 4px solid #ffff00;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8);
+}
+
+:global(body.high-contrast) .track-surface {
+  background: #808080;
+  border: 1px solid #ffffff;
+}
+
+:global(body.high-contrast) .horse-info {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .horse-info.first-place {
+  background-color: #ffff00;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+:global(body.high-contrast) .horse-info.second-place {
+  background-color: #c0c0c0;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+:global(body.high-contrast) .horse-info.third-place {
+  background-color: #ffa500;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+:global(body.high-contrast) .horse-info.finished {
+  background-color: #008000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .start-line,
+:global(body.high-contrast) .finish-line {
+  background-color: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+:global(body.high-contrast) .marker {
+  background-color: #ffffff;
+  color: #000000;
+  border: 1px solid #000000;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .horse {
+    transition: none;
+  }
+
+  .horse-info {
+    transition: none;
+  }
 }
 </style>

@@ -39,6 +39,9 @@ export interface RootState {
   raceCompleted: boolean
   raceResults: CompletedRaceResult[]
   currentRaceHorses: Horse[]
+  soundEnabled: boolean
+  showConfetti: boolean
+  lastWinner: Horse | null
 }
 
 export interface RaceActions {

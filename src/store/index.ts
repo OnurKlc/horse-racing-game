@@ -1,5 +1,6 @@
 import { createStore } from 'vuex'
 import type { RootState, Horse, RaceResult } from '@/types'
+import { soundManager } from '@/utils/soundManager'
 
 const generateHorses = (): Horse[] => {
   const colors = [
@@ -47,7 +48,10 @@ export default createStore<RootState>({
     isWaitingBetweenRounds: false,
     raceCompleted: false,
     raceResults: [],
-    currentRaceHorses: []
+    currentRaceHorses: [],
+    soundEnabled: true,
+    showConfetti: false,
+    lastWinner: null
   },
 
   mutations: {
@@ -117,6 +121,20 @@ export default createStore<RootState>({
       state.currentRaceHorses.forEach((horse: Horse) => {
         horse.position = 0
       })
+    },
+
+    SET_SOUND_ENABLED(state: RootState, enabled: boolean) {
+      state.soundEnabled = enabled
+    },
+
+    TRIGGER_CONFETTI(state: RootState, winner: Horse | null) {
+      state.showConfetti = true
+      state.lastWinner = winner
+    },
+
+    HIDE_CONFETTI(state: RootState) {
+      state.showConfetti = false
+      state.lastWinner = null
     }
   },
 
@@ -162,19 +180,30 @@ export default createStore<RootState>({
 
       commit('SET_RACING_STATUS', false)
       commit('SET_RACE_COMPLETED', true)
+
+      // Play victory fanfare when all races are complete
+      if (state.soundEnabled) {
+        soundManager.playRaceComplete()
+      }
     },
 
     async runSingleRace(
-      { commit, state }: { commit: any; state: RootState },
+      { commit, state, dispatch }: { commit: any; state: RootState; dispatch: any },
       { round, distance }: { round: number; distance: number }
     ) {
       const horses = state.currentRaceHorses
       commit('RESET_HORSE_POSITIONS')
 
+      // Play race start sound
+      if (state.soundEnabled) {
+        soundManager.playRaceStart()
+      }
+
       // Initialize race time tracking
       const raceStartTime = Date.now()
       let totalPausedTime = 0
       let pauseStartTime: number | null = null
+      const finishedHorses: Horse[] = []
 
       horses.forEach(horse => {
         horse.raceTime = null
@@ -216,6 +245,12 @@ export default createStore<RootState>({
                 horse.finished = true
                 // Calculate actual race time excluding paused time
                 horse.raceTime = (currentTime - raceStartTime - totalPausedTime) / 1000
+                finishedHorses.push(horse)
+
+                // Play finish sound for top 3 horses
+                if (state.soundEnabled && finishedHorses.length <= 3) {
+                  soundManager.playHorseFinish(finishedHorses.length)
+                }
               }
 
               if (!horse.finished) {
@@ -238,6 +273,18 @@ export default createStore<RootState>({
               }))
 
             commit('COMPLETE_RACE', { round, results })
+
+            // Trigger confetti for the winner (1st place)
+            if (results.length > 0) {
+              const winner = results[0].horse
+              dispatch('triggerConfetti', winner)
+
+              // Hide confetti after 3 seconds
+              setTimeout(() => {
+                dispatch('hideConfetti')
+              }, 3000)
+            }
+
             resolve()
           }
         }, 100)
@@ -246,8 +293,35 @@ export default createStore<RootState>({
 
     pauseRace({ commit, state }: { commit: any; state: RootState }) {
       if (state.isRacing) {
+        const wasPaused = state.isPaused
         commit('SET_PAUSED_STATUS', !state.isPaused)
+
+        if (state.soundEnabled) {
+          if (wasPaused) {
+            soundManager.playResume()
+          } else {
+            soundManager.playPause()
+          }
+        }
       }
+    },
+
+    toggleSound({ commit, state }: { commit: any; state: RootState }) {
+      const newSoundState = !state.soundEnabled
+      commit('SET_SOUND_ENABLED', newSoundState)
+      soundManager.setEnabled(newSoundState)
+
+      if (newSoundState) {
+        soundManager.playButtonClick()
+      }
+    },
+
+    triggerConfetti({ commit }: { commit: any }, winner: Horse | null) {
+      commit('TRIGGER_CONFETTI', winner)
+    },
+
+    hideConfetti({ commit }: { commit: any }) {
+      commit('HIDE_CONFETTI')
     }
   },
 

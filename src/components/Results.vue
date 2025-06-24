@@ -1,21 +1,39 @@
 <template>
-  <div v-if="raceResults.length > 0" class="results">
-    <h3>Race Results</h3>
+  <div v-if="raceResults.length > 0" class="results" role="region" aria-labelledby="results-title">
+    <h3 id="results-title">Race Results</h3>
 
-    <div class="results-container">
-      <div v-for="(result, index) in raceResults" :key="index" class="race-result">
-        <h4>Round {{ result.round }} - {{ result.distance }}m</h4>
+    <div class="results-container" role="list" aria-label="List of completed race results">
+      <div v-for="(result, index) in raceResults" :key="index" class="race-result" role="listitem">
+        <h4 :id="`race-${index}-title`">Round {{ result.round }} - {{ result.distance }}m</h4>
 
-        <div class="podium">
-          <div class="podium-places">
+        <div
+          class="podium"
+          role="region"
+          :aria-labelledby="`race-${index}-title`"
+          aria-label="Top 3 finishers podium"
+        >
+          <div class="podium-places" role="list" aria-label="Podium positions">
             <div
               v-for="(place, idx) in result.results.slice(0, 3)"
               :key="idx"
               class="podium-place"
               :class="`place-${place.position}`"
+              role="listitem"
+              :tabindex="0"
+              :aria-label="getPodiumDescription(place)"
+              :aria-describedby="`podium-${index}-${idx}-details`"
+              @keydown="handlePodiumKeydown"
             >
-              <div class="medal">{{ place.position }}</div>
-              <div class="horse-circle" :style="{ backgroundColor: place.horse.color }">🐎</div>
+              <div class="medal" :aria-label="`${getPositionName(place.position)} place medal`">
+                {{ place.position }}
+              </div>
+              <div
+                class="horse-circle"
+                :style="{ backgroundColor: place.horse.color }"
+                aria-hidden="true"
+              >
+                🐎
+              </div>
               <div class="place-info">
                 <div class="horse-name">{{ place.horse.name }}</div>
                 <div class="horse-stats">
@@ -23,18 +41,31 @@
                   <span>Time: {{ place.time }}s</span>
                 </div>
               </div>
+              <div :id="`podium-${index}-${idx}-details`" class="sr-only">
+                {{ getPositionName(place.position) }} place: {{ place.horse.name }} with condition
+                {{ place.horse.condition }} finished in {{ place.time }} seconds
+              </div>
             </div>
           </div>
         </div>
 
         <div class="full-results">
-          <table class="results-table">
+          <table
+            class="results-table"
+            role="table"
+            :aria-labelledby="`race-${index}-title`"
+            aria-describedby="table-description"
+          >
+            <div id="table-description" class="sr-only">
+              Complete race results table with position, horse name, condition, and finish time for
+              all participants
+            </div>
             <thead>
-              <tr>
-                <th>Position</th>
-                <th>Horse</th>
-                <th>Condition</th>
-                <th>Time</th>
+              <tr role="row">
+                <th scope="col" role="columnheader">Position</th>
+                <th scope="col" role="columnheader">Horse</th>
+                <th scope="col" role="columnheader">Condition</th>
+                <th scope="col" role="columnheader">Time</th>
               </tr>
             </thead>
             <tbody>
@@ -42,21 +73,30 @@
                 v-for="place in result.results"
                 :key="place.horse.id"
                 :class="{ 'top-three': place.position <= 3 }"
+                role="row"
+                :tabindex="0"
+                :aria-label="getTableRowDescription(place)"
+                @keydown="handleTableRowKeydown"
               >
-                <td class="position">
-                  <span class="position-badge" :class="`position-${place.position}`">
+                <td class="position" role="cell">
+                  <span
+                    class="position-badge"
+                    :class="`position-${place.position}`"
+                    :aria-label="`Position ${place.position}`"
+                  >
                     {{ place.position }}
                   </span>
                 </td>
-                <td class="horse-cell">
+                <td class="horse-cell" role="cell">
                   <div
                     class="color-indicator"
                     :style="{ backgroundColor: place.horse.color }"
+                    :aria-label="`Horse color: ${place.horse.color}`"
                   ></div>
                   {{ place.horse.name }}
                 </td>
-                <td>{{ place.horse.condition }}</td>
-                <td>{{ place.time }}s</td>
+                <td role="cell">{{ place.horse.condition }}</td>
+                <td role="cell">{{ place.time }}s</td>
               </tr>
             </tbody>
           </table>
@@ -73,6 +113,68 @@ export default {
   name: 'Results',
   computed: {
     ...mapState(['raceResults'])
+  },
+  methods: {
+    getPositionName(position: number): string {
+      switch (position) {
+        case 1:
+          return 'First'
+        case 2:
+          return 'Second'
+        case 3:
+          return 'Third'
+        default:
+          return `${position}th`
+      }
+    },
+    getPodiumDescription(place: any): string {
+      return `${this.getPositionName(place.position)} place: ${place.horse.name}, condition ${place.horse.condition}, time ${place.time} seconds`
+    },
+    getTableRowDescription(place: any): string {
+      return `Position ${place.position}: ${place.horse.name}, condition ${place.horse.condition}, finished in ${place.time} seconds`
+    },
+    handlePodiumKeydown(event: KeyboardEvent): void {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        ;(event.target as HTMLElement).focus()
+      }
+    },
+    handleTableRowKeydown(event: KeyboardEvent): void {
+      const currentRow = event.target as HTMLElement
+      const table = currentRow.closest('table')
+      if (!table) return
+
+      const rows = Array.from(table.querySelectorAll('tbody tr')) as HTMLElement[]
+      const currentIndex = rows.indexOf(currentRow)
+
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault()
+          if (currentIndex > 0) {
+            rows[currentIndex - 1].focus()
+          }
+          break
+        case 'ArrowDown':
+          event.preventDefault()
+          if (currentIndex < rows.length - 1) {
+            rows[currentIndex + 1].focus()
+          }
+          break
+        case 'Home':
+          event.preventDefault()
+          rows[0]?.focus()
+          break
+        case 'End':
+          event.preventDefault()
+          rows[rows.length - 1]?.focus()
+          break
+        case 'Enter':
+        case ' ':
+          event.preventDefault()
+          currentRow.focus()
+          break
+      }
+    }
   }
 }
 </script>
@@ -277,5 +379,106 @@ export default {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   display: inline-block;
   vertical-align: middle;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for accessibility */
+.podium-place:focus {
+  outline: 3px solid #4a90e2;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+  border-radius: 8px;
+}
+
+.results-table tr:focus {
+  outline: 3px solid #4a90e2;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+/* High contrast mode support */
+:global(body.high-contrast) .results {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+:global(body.high-contrast) .race-result {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .podium-place:focus {
+  outline: 4px solid #ffff00;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8);
+}
+
+:global(body.high-contrast) .results-table {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .results-table th {
+  background-color: #808080;
+  color: #ffffff;
+  border-bottom: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .results-table td {
+  border-bottom: 1px solid #ffffff;
+}
+
+:global(body.high-contrast) .results-table tr:focus {
+  outline: 4px solid #ffff00;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8);
+}
+
+:global(body.high-contrast) .top-three {
+  background-color: #000080;
+}
+
+:global(body.high-contrast) .medal {
+  border: 2px solid #000000;
+}
+
+:global(body.high-contrast) .position-1 {
+  background-color: #ffff00;
+  color: #000000;
+}
+
+:global(body.high-contrast) .position-2 {
+  background-color: #c0c0c0;
+  color: #000000;
+}
+
+:global(body.high-contrast) .position-3 {
+  background-color: #ffa500;
+  color: #000000;
+}
+
+:global(body.high-contrast) .color-indicator {
+  border: 2px solid #ffffff;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .results-table tr {
+    transition: none;
+  }
 }
 </style>

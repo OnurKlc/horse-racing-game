@@ -1,24 +1,57 @@
 <template>
-  <div v-if="hasSchedule" class="race-schedule">
-    <h3>Race Schedule</h3>
-    <div class="schedule-grid">
+  <div v-if="hasSchedule" class="race-schedule" role="region" aria-labelledby="schedule-title">
+    <h3 id="schedule-title">Race Schedule</h3>
+    <div class="schedule-grid" role="list" aria-label="List of scheduled races">
       <div
         v-for="(race, index) in raceSchedule"
         :key="index"
         class="race-item"
         :class="{ completed: race.completed }"
+        role="listitem"
+        :tabindex="0"
+        :aria-label="getRaceItemDescription(race)"
+        :aria-describedby="`race-${index}-details`"
+        @keydown="handleRaceItemKeydown"
       >
         <h4>Round {{ race.round }}</h4>
         <p>{{ race.distance }}m</p>
         <p>{{ race.horses.length }} horses</p>
 
-        <div v-if="race.horses.length > 0" class="horses-list">
-          <div class="horses-grid">
-            <div v-for="horse in getSortedHorses(race.horses)" :key="horse.id" class="horse-item">
-              <div class="horse-indicator" :style="{ backgroundColor: horse.color }">🐎</div>
+        <div
+          v-if="race.horses.length > 0"
+          class="horses-list"
+          :aria-labelledby="`horses-${index}-title`"
+        >
+          <div id="`horses-${index}-title`" class="sr-only">Participating horses:</div>
+          <div
+            class="horses-grid"
+            role="list"
+            :aria-label="`${race.horses.length} horses participating in round ${race.round}`"
+          >
+            <div
+              v-for="horse in getSortedHorses(race.horses)"
+              :key="horse.id"
+              class="horse-item"
+              role="listitem"
+              :aria-label="`${horse.name} with color ${horse.color}`"
+            >
+              <div
+                class="horse-indicator"
+                :style="{ backgroundColor: horse.color }"
+                aria-hidden="true"
+              >
+                🐎
+              </div>
               <span class="horse-name">{{ horse.name }}</span>
             </div>
           </div>
+        </div>
+
+        <div :id="`race-${index}-details`" class="sr-only">
+          Round {{ race.round }}: {{ race.distance }} meter race with
+          {{ race.horses.length }} horses.
+          {{ race.completed ? 'Race completed.' : 'Race scheduled.' }}
+          Horses: {{ race.horses.map((h: any) => h.name).join(', ') }}
         </div>
       </div>
     </div>
@@ -40,6 +73,48 @@ export default {
   methods: {
     getSortedHorses(horses: Horse[]): Horse[] {
       return [...horses].sort((a, b) => a.id - b.id)
+    },
+    getRaceItemDescription(race: any): string {
+      const status = race.completed ? 'Completed' : 'Scheduled'
+      return `${status} - Round ${race.round}, ${race.distance} meters, ${race.horses.length} horses`
+    },
+    handleRaceItemKeydown(event: KeyboardEvent): void {
+      const currentItem = event.target as HTMLElement
+      const grid = currentItem.parentElement
+      if (!grid) return
+
+      const items = Array.from(grid.querySelectorAll('.race-item')) as HTMLElement[]
+      const currentIndex = items.indexOf(currentItem)
+
+      switch (event.key) {
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          event.preventDefault()
+          if (currentIndex > 0) {
+            items[currentIndex - 1].focus()
+          }
+          break
+        case 'ArrowRight':
+        case 'ArrowDown':
+          event.preventDefault()
+          if (currentIndex < items.length - 1) {
+            items[currentIndex + 1].focus()
+          }
+          break
+        case 'Home':
+          event.preventDefault()
+          items[0]?.focus()
+          break
+        case 'End':
+          event.preventDefault()
+          items[items.length - 1]?.focus()
+          break
+        case 'Enter':
+        case ' ':
+          event.preventDefault()
+          currentItem.focus()
+          break
+      }
     }
   }
 }
@@ -138,5 +213,63 @@ export default {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for accessibility */
+.race-item:focus {
+  outline: 3px solid #4a90e2;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
+}
+
+/* High contrast mode support */
+:global(body.high-contrast) .race-schedule {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+:global(body.high-contrast) .race-item {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .race-item:focus {
+  outline: 4px solid #ffff00;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8);
+}
+
+:global(body.high-contrast) .race-item.completed {
+  background-color: #008000;
+  border-color: #ffffff;
+}
+
+:global(body.high-contrast) .horses-list {
+  border-top: 1px solid #ffffff;
+}
+
+:global(body.high-contrast) .horse-indicator {
+  border: 2px solid #ffffff;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .race-item {
+    transition: none;
+  }
 }
 </style>
