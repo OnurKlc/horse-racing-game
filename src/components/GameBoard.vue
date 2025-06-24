@@ -4,8 +4,9 @@
       <button
         :disabled="isRacing"
         class="btn btn-primary"
-        aria-label="Generate new race schedule"
-        :aria-describedby="isRacing ? 'racing-status' : undefined"
+        :aria-describedby="
+          isRacing ? 'generate-schedule-help racing-status' : 'generate-schedule-help'
+        "
         @click="generateSchedule"
         @keydown="handleKeydown"
       >
@@ -15,8 +16,7 @@
         v-if="!raceCompleted"
         :disabled="!hasSchedule || isRacing"
         class="btn btn-success"
-        aria-label="Start the horse race"
-        :aria-describedby="!hasSchedule ? 'schedule-required' : undefined"
+        :aria-describedby="!hasSchedule ? 'start-race-help schedule-required' : 'start-race-help'"
         @click="startRace"
         @keydown="handleKeydown"
       >
@@ -26,8 +26,7 @@
         v-if="isRacing"
         :disabled="!isRacing"
         class="btn btn-warning"
-        :aria-label="isPaused ? 'Resume the race' : 'Pause the race'"
-        aria-describedby="race-status"
+        aria-describedby="pause-race-help race-status"
         @click="pauseRace"
         @keydown="handleKeydown"
       >
@@ -36,8 +35,8 @@
       <button
         class="btn btn-sound"
         :class="{ muted: !soundEnabled }"
-        :aria-label="soundEnabled ? 'Disable sound effects' : 'Enable sound effects'"
-        :aria-pressed="soundEnabled"
+        aria-describedby="sound-toggle-help"
+        :aria-checked="soundEnabled"
         role="switch"
         @click="toggleSound"
         @keydown="handleKeydown"
@@ -46,8 +45,8 @@
       </button>
       <button
         class="btn btn-contrast"
-        :aria-label="highContrast ? 'Disable high contrast mode' : 'Enable high contrast mode'"
-        :aria-pressed="highContrast"
+        aria-describedby="contrast-toggle-help"
+        :aria-checked="highContrast"
         role="switch"
         @click="toggleHighContrast"
         @keydown="handleKeydown"
@@ -68,6 +67,31 @@
     </div>
     <div id="race-announcements" class="sr-only" aria-live="assertive">
       {{ raceAnnouncement }}
+    </div>
+
+    <!-- Button help text -->
+    <div id="generate-schedule-help" class="sr-only">
+      Creates a new schedule with 6 races featuring different horses and distances
+    </div>
+    <div id="start-race-help" class="sr-only">
+      Begins the horse race simulation with the current schedule
+    </div>
+    <div id="pause-race-help" class="sr-only">
+      {{ isPaused ? 'Resume the paused race' : 'Pause the currently running race' }}
+    </div>
+    <div id="sound-toggle-help" class="sr-only">
+      {{
+        soundEnabled
+          ? 'Turn off race sound effects and audio feedback'
+          : 'Turn on race sound effects and audio feedback'
+      }}
+    </div>
+    <div id="contrast-toggle-help" class="sr-only">
+      {{
+        highContrast
+          ? 'Switch back to normal color scheme'
+          : 'Switch to high contrast mode for better visibility'
+      }}
     </div>
 
     <RaceInfo />
@@ -170,6 +194,7 @@ export default {
     },
     toggleHighContrast(): void {
       this.highContrast = !this.highContrast
+      this.updateBodyClass()
       this.raceAnnouncement = `High contrast mode ${this.highContrast ? 'enabled' : 'disabled'}`
     },
     updateBodyClass(): void {
@@ -256,12 +281,12 @@ export default {
 }
 
 .btn-primary {
-  background-color: #007bff;
+  background-color: #0056b3;
   color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background-color: #0056b3;
+  background-color: #004085;
 }
 
 .btn-success {
@@ -301,13 +326,13 @@ export default {
 }
 
 .btn-contrast {
-  background-color: #17a2b8;
+  background-color: #138496;
   color: white;
   font-size: 14px;
 }
 
 .btn-contrast:hover {
-  background-color: #138496;
+  background-color: #0f6674;
 }
 
 /* Screen reader only content */
@@ -330,71 +355,7 @@ export default {
   box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3);
 }
 
-/* Enhanced focus for high contrast mode */
-:global(body.high-contrast) .btn:focus {
-  outline: 4px solid #ffff00;
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8);
-}
-
-/* High contrast button styles */
-:global(body.high-contrast) .btn {
-  border: 2px solid #000000;
-  font-weight: bold;
-}
-
-:global(body.high-contrast) .btn-primary {
-  background-color: #000080;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-
-:global(body.high-contrast) .btn-success {
-  background-color: #008000;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-
-:global(body.high-contrast) .btn-warning {
-  background-color: #ffa500;
-  color: #000000;
-  border-color: #000000;
-}
-
-:global(body.high-contrast) .btn-sound {
-  background-color: #800080;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-
-:global(body.high-contrast) .btn-sound.muted {
-  background-color: #ff0000;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-
-:global(body.high-contrast) .btn-contrast {
-  background-color: #008080;
-  color: #ffffff;
-  border-color: #ffffff;
-}
-
-:global(body.high-contrast) .btn:disabled {
-  background-color: #808080;
-  color: #c0c0c0;
-  border-color: #c0c0c0;
-}
-
-/* High contrast mode global styles */
-:global(body.high-contrast) {
-  background-color: #000000;
-  color: #ffffff;
-}
-
-:global(body.high-contrast) .game-board {
-  background-color: #000000;
-  color: #ffffff;
-}
+/* High contrast styles are now in global CSS file */
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {

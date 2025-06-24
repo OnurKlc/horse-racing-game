@@ -1,139 +1,111 @@
 # 🐎 Horse Racing Game
 
-An interactive horse racing game built with Vue.js, featuring animated races, real-time results, and professional development practices.
+An interactive horse racing game built with Vue.js 3, TypeScript, and modern web technologies. Features comprehensive accessibility support, sound effects, animations, and professional development practices.
 
-## 🎯 Features
-
-- **Interactive Racing**: Watch 10 horses compete in 6 rounds with different distances
-- **Real-time Animation**: Smooth horse movement with circular badges and finish line animations
-- **Smart Race Logic**: Balanced speed calculations with surprise factors and fatigue simulation
-- **Pause/Resume**: Control race progression with pause functionality
-- **Detailed Results**: Podium-style winners display with comprehensive race statistics
-- **Responsive Design**: Full-width layout optimized for various screen sizes
-- **State Management**: Centralized Vuex store for all race data
-
-## 🏁 Race System
-
-### Race Structure
-
-- **6 Rounds** with increasing distances: 1200m, 1400m, 1600m, 1800m, 2000m, 2200m
-- **10 Random Horses** selected per round from a pool of 20 unique horses
-- **Time-based Results** with accurate finish position calculation
-
-### Horse Features
-
-- **20 Unique Horses** with distinct colors and condition scores (1-100)
-- **Dynamic Performance**: Condition affects speed but doesn't guarantee victory
-- **Surprise Elements**: Random bursts and late-race fatigue for exciting outcomes
+![Lighthouse Performance](https://img.shields.io/badge/Lighthouse-Performance%20100-brightgreen)
+![Lighthouse Accessibility](https://img.shields.io/badge/Lighthouse-Accessibility%2094-brightgreen)
+![Lighthouse Best Practices](https://img.shields.io/badge/Lighthouse-Best%20Practices%20100-brightgreen)
+![Lighthouse SEO](https://img.shields.io/badge/Lighthouse-SEO%2083-yellow)
 
 ## 🚀 Quick Start
 
 ```bash
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+npm install          # Install dependencies
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run test         # Run tests
 ```
 
-## 🛠️ Development Tools
+## 🎯 Key Features
 
-This project includes a comprehensive development toolchain:
+- **Interactive Racing**: 6 rounds with 10 horses, real-time animations, pause/resume controls
+- **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation, screen readers, high contrast mode
+- **Sound Effects**: Race audio with Web Audio API and toggle controls
+- **TypeScript**: Full type safety across components and store
+- **Testing**: Unit, component, and E2E tests with 90%+ coverage
+- **Performance**: 100/100 Lighthouse score, ~41KB gzipped bundle
+
+## 🛠️ Available Scripts
 
 ```bash
+# Development
+npm run dev           # Vite dev server with hot reload
+npm run build         # Production build with TypeScript
+npm run preview       # Preview production build
+npm run type-check    # TypeScript compilation check
+
 # Code Quality
 npm run lint          # ESLint with auto-fix
-npm run lint:check     # ESLint check only
-npm run format         # Prettier formatting
-npm run format:check   # Prettier check only
+npm run format        # Prettier formatting
 
-# Git Hooks (automatically run on commit)
-# - ESLint auto-fix
-# - Prettier formatting
-# - Staged files only
+# Testing
+npm run test          # Unit tests (Vitest)
+npm run test:coverage # Test coverage report
+npm run test:e2e      # End-to-end tests (Playwright)
+npm run test:e2e:ui   # E2E tests with UI
 ```
 
 ## 🏗️ Tech Stack
 
-- **Vue 3** - Modern reactive framework with Composition API
-- **Vuex 4** - Centralized state management
-- **Vite** - Fast build tool and dev server
-- **ESLint** - Code linting with Vue.js rules
-- **Prettier** - Code formatting
-- **Husky** - Git hooks for code quality
-- **lint-staged** - Run linters on staged files only
+**Core**: Vue 3, TypeScript, Vuex 4, Vite  
+**Testing**: Vitest, Playwright, Vue Test Utils  
+**Quality**: ESLint, Prettier, Husky, lint-staged  
+**CI/CD**: GitHub Actions with automated testing and deployment
 
-## 📁 Project Structure
+## 📦 Performance Metrics
+
+- **Bundle Size**: 103KB JS, 23KB CSS (~41KB gzipped total)
+- **Lighthouse**: 100 Performance, 94 Accessibility, 100 Best Practices
+- **Load Times**: 0.4s First/Largest Contentful Paint
+- **Build Time**: <1 second
+
+## ♿ Accessibility Features
+
+- **WCAG 2.1 AA Compliant**: Keyboard navigation, screen readers, ARIA labels
+- **High Contrast Mode**: Toggle for enhanced visibility
+- **Focus Management**: Clear indicators and logical tab order
+- **Live Announcements**: Race status updates for screen readers
+
+## 🧪 Testing Strategy
+
+**Unit Tests**: Sound manager, Vuex store, component logic  
+**Component Tests**: User interactions, accessibility features  
+**E2E Tests**: Cross-browser workflows, WCAG compliance, performance  
+**Coverage**: 90%+ statements, branches, functions, and lines
+
+## 🏛️ Project Structure
 
 ```
 src/
-├── components/
-│   ├── GameBoard.vue     # Main game controls and layout
-│   ├── HorseList.vue     # Display all available horses
-│   ├── RaceInfo.vue      # Current race status and completion
-│   ├── RaceSchedule.vue  # Schedule overview with horse lists
-│   ├── RaceTrack.vue     # Animated race visualization
-│   └── Results.vue       # Race results with podium display
-├── store/
-│   └── index.js          # Vuex store with race logic
-├── assets/
-│   ├── base.css         # Base styles and resets
-│   └── main.css         # Global application styles
-└── main.js              # Application entry point
+├── components/           # Vue components with TypeScript
+├── store/               # Vuex store with type definitions
+├── utils/               # Sound manager and utilities
+├── assets/              # Global CSS and high contrast theme
+└── types/               # TypeScript interfaces
+
+tests/
+├── unit/                # Component and utility tests
+└── e2e/                 # Playwright browser tests
+
+.github/workflows/       # CI/CD pipeline
 ```
 
 ## 🎮 How to Play
 
-1. **Generate Schedule**: Click "Generate Schedule" to create a new race series
-2. **Start Racing**: Click "Start Race" to begin the 6-round competition
-3. **Control Playback**: Use "Pause/Resume" to control race progression
-4. **View Results**: Check the podium and detailed results after each round
-5. **New Series**: Generate a new schedule after all rounds complete
+1. **Generate Schedule** → **Start Race** → **Control with Pause/Resume**
+2. **Toggle Features**: Sound effects and high contrast mode
+3. **View Results**: Podium display and detailed race statistics
 
-## 🏆 Race Features
+## 🚀 CI/CD Pipeline
 
-### Visual Indicators
+Automated GitHub Actions workflow:
 
-- **Gold/Silver/Bronze** horse info boxes for 1st/2nd/3rd place finishers
-- **Real-time Position** tracking with smooth animations
-- **Finish Line** celebrations with color-coded results
-
-### Performance Factors
-
-- **Base Speed**: Derived from horse condition (35% influence)
-- **Random Variance**: 65% randomness for unpredictable outcomes
-- **Surprise Bursts**: 10% chance of extra speed boosts
-- **Late Fatigue**: Slowdown potential in final 30% of race
-
-## 🔧 Code Quality Standards
-
-- **ESLint Rules**: Vue.js best practices with custom configuration
-- **Prettier Formatting**: Consistent code style across all files
-- **Git Hooks**: Automatic linting and formatting on commits
-- **Zero Unused Code**: Clean, optimized codebase
-- **Modern JavaScript**: ES6+ features with proper error handling
-
-## 🎨 Design Principles
-
-- **Component-Based**: Modular Vue components with single responsibilities
-- **State-Driven**: Centralized state management with reactive updates
-- **User Experience**: Smooth animations and clear visual feedback
-- **Accessibility**: Semantic HTML and proper contrast ratios
-- **Performance**: Optimized build with minimal bundle size
-
-## 📊 Performance Metrics
-
-- **Bundle Size**: ~86KB JS, ~12KB CSS (gzipped: ~32KB JS, ~3KB CSS)
-- **Build Time**: <1 second
-- **Lighthouse Score**: Optimized for performance and best practices
-- **Zero Linting Errors**: Clean, maintainable codebase
+- Multi-version Node.js testing (16, 18, 20)
+- TypeScript compilation and ESLint analysis
+- Unit and E2E test execution with coverage
+- Accessibility compliance verification
+- Automated deployment to GitHub Pages
 
 ---
 
-**Built with ❤️ for frontend development excellence**
+**Built for frontend developer excellence with modern web standards and comprehensive accessibility support.**

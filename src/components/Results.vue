@@ -50,16 +50,16 @@
         </div>
 
         <div class="full-results">
+          <div id="table-description" class="sr-only">
+            Complete race results table with position, horse name, condition, and finish time for
+            all participants
+          </div>
           <table
             class="results-table"
             role="table"
             :aria-labelledby="`race-${index}-title`"
             aria-describedby="table-description"
           >
-            <div id="table-description" class="sr-only">
-              Complete race results table with position, horse name, condition, and finish time for
-              all participants
-            </div>
             <thead>
               <tr role="row">
                 <th scope="col" role="columnheader">Position</th>

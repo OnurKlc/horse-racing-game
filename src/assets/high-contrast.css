@@ -1,0 +1,299 @@
+/* High contrast mode styles */
+
+/* Base body and app styles */
+body.high-contrast {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast .game-board {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+/* Button styles */
+body.high-contrast .btn {
+  border: 2px solid #000000 !important;
+  font-weight: bold !important;
+}
+
+body.high-contrast .btn:focus {
+  outline: 4px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8) !important;
+}
+
+body.high-contrast .btn-primary {
+  background-color: #000080 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast .btn-success {
+  background-color: #008000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast .btn-warning {
+  background-color: #ffa500 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+body.high-contrast .btn-sound {
+  background-color: #800080 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast .btn-sound.muted {
+  background-color: #ff0000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast .btn-contrast {
+  background-color: #008080 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast .btn:disabled {
+  background-color: #808080 !important;
+  color: #c0c0c0 !important;
+  border-color: #c0c0c0 !important;
+}
+
+/* Horse List styles */
+body.high-contrast .horse-list {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .horse-card {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .horse-card:focus {
+  outline: 4px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8) !important;
+}
+
+body.high-contrast .horse-card.racing {
+  border-color: #00ffff !important;
+  background-color: #000080 !important;
+}
+
+body.high-contrast .condition-progress {
+  background-color: #808080 !important;
+  border: 1px solid #ffffff !important;
+}
+
+/* Race Track styles */
+body.high-contrast .race-track {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .track-container {
+  background: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .lane {
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .lane:focus {
+  outline: 4px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8) !important;
+}
+
+body.high-contrast .track-surface {
+  background: #808080 !important;
+  border: 1px solid #ffffff !important;
+}
+
+body.high-contrast .horse-info {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .horse-info.first-place {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast .horse-info.second-place {
+  background-color: #c0c0c0 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast .horse-info.third-place {
+  background-color: #ffa500 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast .horse-info.finished {
+  background-color: #008000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .start-line,
+body.high-contrast .finish-line {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast .marker {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 1px solid #000000 !important;
+}
+
+/* Race Info styles */
+body.high-contrast .race-info {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .current-round {
+  background-color: #808080 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .paused-indicator {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast .waiting-indicator {
+  background-color: #00ffff !important;
+  color: #000000 !important;
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast .completed-title {
+  color: #00ff00 !important;
+}
+
+body.high-contrast .completion-message {
+  background-color: #008000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+/* Race Schedule styles */
+body.high-contrast .race-schedule {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast .race-item {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .race-item:focus {
+  outline: 4px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8) !important;
+}
+
+body.high-contrast .race-item.completed {
+  background-color: #008000 !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast .horses-list {
+  border-top: 1px solid #ffffff !important;
+}
+
+body.high-contrast .horse-indicator {
+  border: 2px solid #ffffff !important;
+}
+
+/* Results styles */
+body.high-contrast .results {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast .race-result {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .podium-place:focus {
+  outline: 4px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8) !important;
+}
+
+body.high-contrast .results-table {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .results-table th {
+  background-color: #808080 !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid #ffffff !important;
+}
+
+body.high-contrast .results-table td {
+  border-bottom: 1px solid #ffffff !important;
+}
+
+body.high-contrast .results-table tr:focus {
+  outline: 4px solid #ffff00 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(255, 255, 0, 0.8) !important;
+}
+
+body.high-contrast .top-three {
+  background-color: #000080 !important;
+}
+
+body.high-contrast .medal {
+  border: 2px solid #000000 !important;
+}
+
+body.high-contrast .position-1 {
+  background-color: #ffff00 !important;
+  color: #000000 !important;
+}
+
+body.high-contrast .position-2 {
+  background-color: #c0c0c0 !important;
+  color: #000000 !important;
+}
+
+body.high-contrast .position-3 {
+  background-color: #ffa500 !important;
+  color: #000000 !important;
+}
+
+body.high-contrast .color-indicator {
+  border: 2px solid #ffffff !important;
+}
