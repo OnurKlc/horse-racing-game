@@ -1,47 +1,55 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import GameBoard from './components/GameBoard.vue'
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+  <div id="app">
+    <header>
+      <h1>🐎 Horse Racing Game</h1>
+      <p>Interactive horse racing simulation with 6 rounds</p>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+    <main>
+      <GameBoard />
+    </main>
+  </div>
 </template>
 
 <style scoped>
+#app {
+  width: 100vw;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #2c3e50;
+  margin: 0;
+  padding: 0;
+}
+
 header {
-  line-height: 1.5;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+header h1 {
+  margin: 0 0 10px 0;
+  color: #2c3e50;
+  font-size: 2.5em;
+  font-weight: bold;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
+header p {
+  margin: 0;
+  color: #6c757d;
+  font-size: 1.1em;
+}
 
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+main {
+  width: 100%;
+  padding: 0;
+  box-sizing: border-box;
 }
 </style>
