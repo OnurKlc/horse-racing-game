@@ -23,7 +23,16 @@ export default [
         setInterval: 'readonly',
         clearInterval: 'readonly',
         Date: 'readonly',
-        Math: 'readonly'
+        Math: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        NodeListOf: 'readonly',
+        AudioContext: 'readonly',
+        OscillatorType: 'readonly',
+        performance: 'readonly'
       }
     },
     plugins: {
@@ -43,10 +52,48 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-inferrable-types': 'error',
 
-      // Code style
-      indent: ['error', 2],
-      quotes: ['error', 'single'],
-      semi: ['error', 'never']
+      // Code style - disabled rules handled by Prettier
+      indent: 'off',
+      quotes: 'off',
+      semi: 'off'
+    }
+  },
+  // Configuration for test files
+  {
+    files: ['**/*.test.ts', '**/*.spec.ts', '**/test/**/*.ts'],
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**', '*.min.js', '.husky/**'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      parser: typescriptParser,
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        setTimeout: 'readonly',
+        setInterval: 'readonly',
+        clearInterval: 'readonly',
+        Date: 'readonly',
+        Math: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        NodeListOf: 'readonly',
+        AudioContext: 'readonly',
+        OscillatorType: 'readonly',
+        performance: 'readonly'
+      }
+    },
+    plugins: {
+      '@typescript-eslint': typescript
+    },
+    rules: {
+      // Allow any in test files for mocking
+      '@typescript-eslint/no-explicit-any': 'off',
+      'no-console': 'off',
+      'prefer-const': 'error',
+      'no-var': 'error'
     }
   },
   // Configuration for Vue files
@@ -67,7 +114,16 @@ export default [
         setInterval: 'readonly',
         clearInterval: 'readonly',
         Date: 'readonly',
-        Math: 'readonly'
+        Math: 'readonly',
+        window: 'readonly',
+        document: 'readonly',
+        HTMLElement: 'readonly',
+        HTMLButtonElement: 'readonly',
+        KeyboardEvent: 'readonly',
+        NodeListOf: 'readonly',
+        AudioContext: 'readonly',
+        OscillatorType: 'readonly',
+        performance: 'readonly'
       }
     },
     plugins: {
@@ -91,10 +147,10 @@ export default [
       '@typescript-eslint/no-explicit-any': 'off', // Allow any in Vue components due to Vuex integration
       '@typescript-eslint/no-inferrable-types': 'error',
 
-      // Code style
-      indent: ['error', 2],
-      quotes: ['error', 'single'],
-      semi: ['error', 'never']
+      // Code style - disabled rules handled by Prettier
+      indent: 'off',
+      quotes: 'off',
+      semi: 'off'
     }
   }
 ]
