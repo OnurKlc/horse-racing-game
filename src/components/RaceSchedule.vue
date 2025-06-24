@@ -126,19 +126,6 @@ export default {
   font-size: 12px;
 }
 
-.horse-number {
-  width: 20px;
-  height: 20px;
-  background-color: #6c757d;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 10px;
-  font-weight: bold;
-  flex-shrink: 0;
-}
 
 .horse-indicator {
   width: 20px;

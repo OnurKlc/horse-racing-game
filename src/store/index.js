@@ -231,10 +231,6 @@ export default createStore({
   getters: {
     currentRaceData: (state) => {
       return state.raceSchedule[state.currentRound] || null
-    },
-    
-    isLastRound: (state) => {
-      return state.currentRound >= state.raceSchedule.length - 1
     }
   }
 })
