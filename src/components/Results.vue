@@ -1,30 +1,21 @@
 <template>
-  <div class="results" v-if="raceResults.length > 0">
+  <div v-if="raceResults.length > 0" class="results">
     <h3>Race Results</h3>
-    
+
     <div class="results-container">
-      <div 
-        v-for="(result, index) in raceResults" 
-        :key="index"
-        class="race-result"
-      >
+      <div v-for="(result, index) in raceResults" :key="index" class="race-result">
         <h4>Round {{ result.round }} - {{ result.distance }}m</h4>
-        
+
         <div class="podium">
           <div class="podium-places">
-            <div 
-              v-for="(place, idx) in result.results.slice(0, 3)" 
+            <div
+              v-for="(place, idx) in result.results.slice(0, 3)"
               :key="idx"
               class="podium-place"
               :class="`place-${place.position}`"
             >
               <div class="medal">{{ place.position }}</div>
-              <div 
-                class="horse-circle"
-                :style="{ backgroundColor: place.horse.color }"
-              >
-                🐎
-              </div>
+              <div class="horse-circle" :style="{ backgroundColor: place.horse.color }">🐎</div>
               <div class="place-info">
                 <div class="horse-name">{{ place.horse.name }}</div>
                 <div class="horse-stats">
@@ -35,7 +26,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="full-results">
           <table class="results-table">
             <thead>
@@ -47,8 +38,8 @@
               </tr>
             </thead>
             <tbody>
-              <tr 
-                v-for="place in result.results" 
+              <tr
+                v-for="place in result.results"
                 :key="place.horse.id"
                 :class="{ 'top-three': place.position <= 3 }"
               >
@@ -58,7 +49,7 @@
                   </span>
                 </td>
                 <td class="horse-cell">
-                  <div 
+                  <div
                     class="color-indicator"
                     :style="{ backgroundColor: place.horse.color }"
                   ></div>
@@ -159,7 +150,7 @@ export default {
   font-weight: bold;
   font-size: 18px;
   margin-bottom: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .horse-circle {
@@ -171,7 +162,7 @@ export default {
   justify-content: center;
   font-size: 24px;
   margin-bottom: 10px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border: 3px solid white;
   transform: scaleX(-1);
 }
@@ -204,7 +195,7 @@ export default {
   background-color: white;
   border-radius: 5px;
   overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .results-table th,
@@ -283,7 +274,7 @@ export default {
   height: 20px;
   border-radius: 50%;
   border: 2px solid white;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   display: inline-block;
   vertical-align: middle;
 }

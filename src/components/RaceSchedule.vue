@@ -1,5 +1,5 @@
 <template>
-  <div class="race-schedule" v-if="hasSchedule">
+  <div v-if="hasSchedule" class="race-schedule">
     <h3>Race Schedule</h3>
     <div class="schedule-grid">
       <div
@@ -12,19 +12,10 @@
         <p>{{ race.distance }}m</p>
         <p>{{ race.horses.length }} horses</p>
 
-        <div class="horses-list" v-if="race.horses.length > 0">
+        <div v-if="race.horses.length > 0" class="horses-list">
           <div class="horses-grid">
-            <div
-              v-for="horse in getSortedHorses(race.horses)"
-              :key="horse.id"
-              class="horse-item"
-            >
-              <div
-                class="horse-indicator"
-                :style="{ backgroundColor: horse.color }"
-              >
-                🐎
-              </div>
+            <div v-for="horse in getSortedHorses(race.horses)" :key="horse.id" class="horse-item">
+              <div class="horse-indicator" :style="{ backgroundColor: horse.color }">🐎</div>
               <span class="horse-name">{{ horse.name }}</span>
             </div>
           </div>
@@ -125,7 +116,6 @@ export default {
   gap: 5px;
   font-size: 12px;
 }
-
 
 .horse-indicator {
   width: 20px;

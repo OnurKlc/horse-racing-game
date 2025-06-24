@@ -1,19 +1,15 @@
 <template>
-  <div class="race-info" v-if="hasSchedule">
+  <div v-if="hasSchedule" class="race-info">
     <h3 v-if="!raceCompleted">Race Schedule Generated</h3>
     <h3 v-if="raceCompleted" class="completed-title">🏁 All Races Completed!</h3>
-    
-    <div class="current-round" v-if="isRacing">
+
+    <div v-if="isRacing" class="current-round">
       <h4>Current Round: {{ currentRound + 1 }} / 6</h4>
       <p>Distance: {{ currentRaceData?.distance }}m</p>
-      <div v-if="isPaused" class="paused-indicator">
-        ⏸️ Race Paused
-      </div>
-      <div v-if="isWaitingBetweenRounds" class="waiting-indicator">
-        ⏳ Preparing Next Round...
-      </div>
+      <div v-if="isPaused" class="paused-indicator">⏸️ Race Paused</div>
+      <div v-if="isWaitingBetweenRounds" class="waiting-indicator">⏳ Preparing Next Round...</div>
     </div>
-    
+
     <div v-if="raceCompleted" class="completion-message">
       <p>All 6 rounds have been completed! Generate a new schedule to start another race series.</p>
     </div>
@@ -26,7 +22,14 @@ import { mapState, mapGetters } from 'vuex'
 export default {
   name: 'RaceInfo',
   computed: {
-    ...mapState(['raceSchedule', 'isRacing', 'isPaused', 'isWaitingBetweenRounds', 'raceCompleted', 'currentRound']),
+    ...mapState([
+      'raceSchedule',
+      'isRacing',
+      'isPaused',
+      'isWaitingBetweenRounds',
+      'raceCompleted',
+      'currentRound'
+    ]),
     ...mapGetters(['currentRaceData']),
     hasSchedule() {
       return this.raceSchedule.length > 0
@@ -89,8 +92,13 @@ export default {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }
 
 .completed-title {

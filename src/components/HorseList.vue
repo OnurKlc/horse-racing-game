@@ -1,29 +1,24 @@
 <template>
   <div class="horse-list">
     <h3>Available Horses ({{ horses.length }})</h3>
-    
+
     <div class="horses-grid">
-      <div 
-        v-for="horse in horses" 
+      <div
+        v-for="horse in horses"
         :key="horse.id"
         class="horse-card"
-        :class="{ 'racing': horse.isRacing }"
+        :class="{ racing: horse.isRacing }"
       >
-        <div 
-          class="horse-avatar"
-          :style="{ backgroundColor: horse.color }"
-        >
-          🐎
-        </div>
-        
+        <div class="horse-avatar" :style="{ backgroundColor: horse.color }">🐎</div>
+
         <div class="horse-details">
           <h4>{{ horse.name }}</h4>
           <div class="condition-bar">
             <div class="condition-label">Condition: {{ horse.condition }}/100</div>
             <div class="condition-progress">
-              <div 
+              <div
                 class="condition-fill"
-                :style="{ 
+                :style="{
                   width: `${horse.condition}%`,
                   backgroundColor: getConditionColor(horse.condition)
                 }"

@@ -1,51 +1,45 @@
 <template>
   <div class="race-track">
     <h3>Round {{ currentRound + 1 }} - {{ currentRaceData?.distance }}m</h3>
-    
+
     <div class="track-container">
       <div class="track-header">
         <div class="start-line">START</div>
         <div class="finish-line">FINISH</div>
       </div>
-      
+
       <div class="lanes">
-        <div 
-          v-for="(horse, index) in currentRaceHorses" 
-          :key="horse.id"
-          class="lane"
-        >
+        <div v-for="(horse, index) in currentRaceHorses" :key="horse.id" class="lane">
           <div class="lane-number">{{ index + 1 }}</div>
           <div class="track-surface">
-            <div 
+            <div
               class="horse"
-              :style="{ 
+              :style="{
                 left: `${(horse.position / currentRaceData.distance) * 100}%`
               }"
             >
-              <div 
-                class="horse-circle"
-                :style="{ backgroundColor: horse.color }"
-              >
-                🐎
-              </div>
+              <div class="horse-circle" :style="{ backgroundColor: horse.color }">🐎</div>
             </div>
           </div>
-          <div 
-            class="horse-info"
-            :class="getFinishPosition(horse)"
-          >
+          <div class="horse-info" :class="getFinishPosition(horse)">
             <span class="horse-name">{{ horse.name }}</span>
             <span class="horse-condition">{{ horse.condition }}</span>
           </div>
         </div>
       </div>
-      
+
       <div class="progress-info">
         <div class="distance-markers">
           <div class="marker" style="left: 0%">0m</div>
-          <div class="marker" style="left: 25%">{{ Math.round(currentRaceData.distance * 0.25) }}m</div>
-          <div class="marker" style="left: 50%">{{ Math.round(currentRaceData.distance * 0.5) }}m</div>
-          <div class="marker" style="left: 75%">{{ Math.round(currentRaceData.distance * 0.75) }}m</div>
+          <div class="marker" style="left: 25%">
+            {{ Math.round(currentRaceData.distance * 0.25) }}m
+          </div>
+          <div class="marker" style="left: 50%">
+            {{ Math.round(currentRaceData.distance * 0.5) }}m
+          </div>
+          <div class="marker" style="left: 75%">
+            {{ Math.round(currentRaceData.distance * 0.75) }}m
+          </div>
           <div class="marker" style="left: 100%">{{ currentRaceData.distance }}m</div>
         </div>
       </div>
@@ -72,7 +66,7 @@ export default {
       if (horse.position < this.currentRaceData.distance) {
         return '' // Not finished yet
       }
-      
+
       const finishIndex = this.finishedHorses.findIndex(h => h.id === horse.id)
       if (finishIndex === 0) return 'first-place'
       if (finishIndex === 1) return 'second-place'
@@ -118,7 +112,7 @@ export default {
   background-color: white;
   padding: 5px 10px;
   border-radius: 5px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .lanes {
@@ -150,7 +144,7 @@ export default {
   align-items: center;
   justify-content: center;
   margin-left: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .track-surface {
@@ -158,9 +152,7 @@ export default {
   position: relative;
   height: 100%;
   margin: 0 10px;
-  background: linear-gradient(to right, 
-    rgba(139, 69, 19, 0.3) 0%, 
-    rgba(160, 82, 45, 0.3) 100%);
+  background: linear-gradient(to right, rgba(139, 69, 19, 0.3) 0%, rgba(160, 82, 45, 0.3) 100%);
   border-radius: 20px;
   overflow: hidden;
 }
@@ -197,7 +189,7 @@ export default {
   padding: 5px;
   border-radius: 5px;
   margin-right: 10px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
 }
 
@@ -274,6 +266,6 @@ export default {
   background-color: white;
   padding: 2px 6px;
   border-radius: 3px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 </style>

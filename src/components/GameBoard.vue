@@ -1,27 +1,18 @@
 <template>
   <div class="game-board">
     <div class="controls">
-      <button
-        @click="generateSchedule"
-        :disabled="isRacing"
-        class="btn btn-primary"
-      >
+      <button :disabled="isRacing" class="btn btn-primary" @click="generateSchedule">
         Generate Schedule
       </button>
       <button
-        @click="startRace"
+        v-if="!raceCompleted"
         :disabled="!hasSchedule || isRacing"
         class="btn btn-success"
-        v-if="!raceCompleted"
+        @click="startRace"
       >
         {{ isRacing ? 'Racing...' : 'Start Race' }}
       </button>
-      <button
-        @click="pauseRace"
-        :disabled="!isRacing"
-        class="btn btn-warning"
-        v-if="isRacing"
-      >
+      <button v-if="isRacing" :disabled="!isRacing" class="btn btn-warning" @click="pauseRace">
         {{ isPaused ? 'Resume' : 'Pause' }}
       </button>
     </div>
@@ -124,6 +115,4 @@ export default {
 .btn-warning:hover:not(:disabled) {
   background-color: #e0a800;
 }
-
-
 </style>
