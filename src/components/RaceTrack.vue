@@ -47,8 +47,9 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState, mapGetters } from 'vuex'
+import type { Horse } from '@/types'
 
 export default {
   name: 'RaceTrack',
@@ -56,18 +57,21 @@ export default {
     ...mapState(['currentRaceHorses', 'currentRound']),
     ...mapGetters(['currentRaceData']),
     finishedHorses() {
-      return this.currentRaceHorses
-        .filter(horse => horse.position >= this.currentRaceData.distance && horse.raceTime !== null)
-        .sort((a, b) => a.raceTime - b.raceTime) // Sort by fastest time first
+      return (this as any).currentRaceHorses
+        .filter(
+          (horse: Horse) =>
+            horse.position >= (this as any).currentRaceData.distance && horse.raceTime !== null
+        )
+        .sort((a: Horse, b: Horse) => (a.raceTime || 0) - (b.raceTime || 0))
     }
   },
   methods: {
-    getFinishPosition(horse) {
-      if (horse.position < this.currentRaceData.distance) {
-        return '' // Not finished yet
+    getFinishPosition(horse: Horse): string {
+      if (horse.position < (this as any).currentRaceData.distance) {
+        return ''
       }
 
-      const finishIndex = this.finishedHorses.findIndex(h => h.id === horse.id)
+      const finishIndex = (this as any).finishedHorses.findIndex((h: Horse) => h.id === horse.id)
       if (finishIndex === 0) return 'first-place'
       if (finishIndex === 1) return 'second-place'
       if (finishIndex === 2) return 'third-place'

@@ -25,19 +25,20 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState } from 'vuex'
+import type { Horse } from '@/types'
 
 export default {
   name: 'RaceSchedule',
   computed: {
     ...mapState(['raceSchedule']),
-    hasSchedule() {
-      return this.raceSchedule.length > 0
+    hasSchedule(): boolean {
+      return (this as any).raceSchedule.length > 0
     }
   },
   methods: {
-    getSortedHorses(horses) {
+    getSortedHorses(horses: Horse[]): Horse[] {
       return [...horses].sort((a, b) => a.id - b.id)
     }
   }

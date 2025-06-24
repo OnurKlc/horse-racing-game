@@ -29,7 +29,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState, mapActions, mapGetters } from 'vuex'
 import RaceTrack from './RaceTrack.vue'
 import Results from './Results.vue'
@@ -49,14 +49,14 @@ export default {
   computed: {
     ...mapState(['raceSchedule', 'isRacing', 'isPaused', 'raceCompleted', 'currentRound']),
     ...mapGetters(['currentRaceData']),
-    hasSchedule() {
-      return this.raceSchedule.length > 0
+    hasSchedule(): boolean {
+      return (this as any).raceSchedule.length > 0
     }
   },
   methods: {
     ...mapActions(['generateRaceSchedule', 'startRace', 'pauseRace']),
-    generateSchedule() {
-      this.generateRaceSchedule()
+    generateSchedule(): void {
+      ;(this as any).generateRaceSchedule()
     }
   }
 }

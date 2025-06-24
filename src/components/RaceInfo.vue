@@ -16,7 +16,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -31,8 +31,8 @@ export default {
       'currentRound'
     ]),
     ...mapGetters(['currentRaceData']),
-    hasSchedule() {
-      return this.raceSchedule.length > 0
+    hasSchedule(): boolean {
+      return (this as any).raceSchedule.length > 0
     }
   }
 }

@@ -31,7 +31,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { mapState } from 'vuex'
 
 export default {
@@ -40,7 +40,7 @@ export default {
     ...mapState(['horses'])
   },
   methods: {
-    getConditionColor(condition) {
+    getConditionColor(condition: number): string {
       if (condition >= 80) return '#28a745'
       if (condition >= 60) return '#ffc107'
       if (condition >= 40) return '#fd7e14'

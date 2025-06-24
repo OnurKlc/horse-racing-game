@@ -1,6 +1,7 @@
 import { createStore } from 'vuex'
+import type { RootState, Horse, RaceResult } from '@/types'
 
-const generateHorses = () => {
+const generateHorses = (): Horse[] => {
   const colors = [
     '#FF6B6B',
     '#4ECDC4',
@@ -34,9 +35,9 @@ const generateHorses = () => {
   }))
 }
 
-const RACE_DISTANCES = [1200, 1400, 1600, 1800, 2000, 2200]
+const RACE_DISTANCES: number[] = [1200, 1400, 1600, 1800, 2000, 2200]
 
-export default createStore({
+export default createStore<RootState>({
   state: {
     horses: generateHorses(),
     raceSchedule: [],
@@ -50,7 +51,7 @@ export default createStore({
   },
 
   mutations: {
-    GENERATE_RACE_SCHEDULE(state) {
+    GENERATE_RACE_SCHEDULE(state: RootState) {
       state.raceSchedule = RACE_DISTANCES.map((distance, index) => ({
         round: index + 1,
         distance,
@@ -63,41 +64,44 @@ export default createStore({
       state.raceCompleted = false
     },
 
-    SET_CURRENT_ROUND(state, round) {
+    SET_CURRENT_ROUND(state: RootState, round: number) {
       state.currentRound = round
     },
 
-    SET_RACING_STATUS(state, status) {
+    SET_RACING_STATUS(state: RootState, status: boolean) {
       state.isRacing = status
     },
 
-    SET_PAUSED_STATUS(state, status) {
+    SET_PAUSED_STATUS(state: RootState, status: boolean) {
       state.isPaused = status
     },
 
-    SET_WAITING_STATUS(state, status) {
+    SET_WAITING_STATUS(state: RootState, status: boolean) {
       state.isWaitingBetweenRounds = status
     },
 
-    SET_RACE_COMPLETED(state, status) {
+    SET_RACE_COMPLETED(state: RootState, status: boolean) {
       state.raceCompleted = status
     },
 
-    SET_RACE_HORSES(state, { round, horses }) {
+    SET_RACE_HORSES(state: RootState, { round, horses }: { round: number; horses: Horse[] }) {
       if (state.raceSchedule[round]) {
         state.raceSchedule[round].horses = horses
       }
       state.currentRaceHorses = horses
     },
 
-    UPDATE_HORSE_POSITION(state, { horseId, position }) {
+    UPDATE_HORSE_POSITION(
+      state: RootState,
+      { horseId, position }: { horseId: number; position: number }
+    ) {
       const horse = state.currentRaceHorses.find(h => h.id === horseId)
       if (horse) {
         horse.position = position
       }
     },
 
-    COMPLETE_RACE(state, { round, results }) {
+    COMPLETE_RACE(state: RootState, { round, results }: { round: number; results: RaceResult[] }) {
       if (state.raceSchedule[round]) {
         state.raceSchedule[round].results = results
         state.raceSchedule[round].completed = true
@@ -109,15 +113,15 @@ export default createStore({
       })
     },
 
-    RESET_HORSE_POSITIONS(state) {
-      state.currentRaceHorses.forEach(horse => {
+    RESET_HORSE_POSITIONS(state: RootState) {
+      state.currentRaceHorses.forEach((horse: Horse) => {
         horse.position = 0
       })
     }
   },
 
   actions: {
-    generateRaceSchedule({ commit, state }) {
+    generateRaceSchedule({ commit, state }: { commit: any; state: RootState }) {
       commit('GENERATE_RACE_SCHEDULE')
 
       // Select 10 random horses for each round
@@ -135,7 +139,7 @@ export default createStore({
       })
     },
 
-    async startRace({ commit, state, dispatch }) {
+    async startRace({ commit, state, dispatch }: { commit: any; state: RootState; dispatch: any }) {
       if (state.isRacing) return
 
       commit('SET_RACING_STATUS', true)
@@ -160,21 +164,24 @@ export default createStore({
       commit('SET_RACE_COMPLETED', true)
     },
 
-    async runSingleRace({ commit, state }, { round, distance }) {
+    async runSingleRace(
+      { commit, state }: { commit: any; state: RootState },
+      { round, distance }: { round: number; distance: number }
+    ) {
       const horses = state.currentRaceHorses
       commit('RESET_HORSE_POSITIONS')
 
       // Initialize race time tracking
       const raceStartTime = Date.now()
       let totalPausedTime = 0
-      let pauseStartTime = null
+      let pauseStartTime: number | null = null
 
       horses.forEach(horse => {
         horse.raceTime = null
         horse.finished = false
       })
 
-      return new Promise(resolve => {
+      return new Promise<void>(resolve => {
         const raceInterval = setInterval(() => {
           const currentTime = Date.now()
 
@@ -223,11 +230,11 @@ export default createStore({
             // Sort by race time (fastest first)
             const results = horses
               .filter(horse => horse.raceTime !== null)
-              .sort((a, b) => a.raceTime - b.raceTime)
+              .sort((a, b) => (a.raceTime || 0) - (b.raceTime || 0))
               .map((horse, index) => ({
                 position: index + 1,
                 horse: { ...horse },
-                time: horse.raceTime.toFixed(2)
+                time: (horse.raceTime || 0).toFixed(2)
               }))
 
             commit('COMPLETE_RACE', { round, results })
@@ -237,7 +244,7 @@ export default createStore({
       })
     },
 
-    pauseRace({ commit, state }) {
+    pauseRace({ commit, state }: { commit: any; state: RootState }) {
       if (state.isRacing) {
         commit('SET_PAUSED_STATUS', !state.isPaused)
       }
@@ -245,7 +252,7 @@ export default createStore({
   },
 
   getters: {
-    currentRaceData: state => {
+    currentRaceData: (state: RootState) => {
       return state.raceSchedule[state.currentRound] || null
     }
   }
