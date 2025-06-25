@@ -107,7 +107,7 @@ tests/
 
 Automated GitHub Actions workflow:
 
-- Multi-version Node.js testing (16, 18, 20)
+- Multi-version Node.js testing (18, 20)
 - TypeScript compilation and ESLint analysis
 - Unit and E2E test execution with coverage
 - Accessibility compliance verification
