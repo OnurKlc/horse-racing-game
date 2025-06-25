@@ -1,4 +1,4 @@
-# 🐎 Horse Racing Game
+# Horse Racing Game
 
 An interactive horse racing game built with Vue.js 3, TypeScript, and modern web technologies. Features comprehensive accessibility support, sound effects, animations, and professional development practices.
 
@@ -7,7 +7,7 @@ An interactive horse racing game built with Vue.js 3, TypeScript, and modern web
 ![Lighthouse Best Practices](https://img.shields.io/badge/Lighthouse-Best%20Practices%20100-brightgreen)
 ![Lighthouse SEO](https://img.shields.io/badge/Lighthouse-SEO%2083-yellow)
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
 npm install          # Install dependencies
@@ -16,7 +16,7 @@ npm run build        # Build for production
 npm run test         # Run tests
 ```
 
-## 🎯 Key Features
+## Key Features
 
 - **Interactive Racing**: 6 rounds with 10 horses, real-time animations, pause/resume controls
 - **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation, screen readers, high contrast mode
@@ -25,7 +25,7 @@ npm run test         # Run tests
 - **Testing**: Unit, component, and E2E tests with 70% overall coverage (96% components)
 - **Performance**: 100/100 Lighthouse score, ~41KB gzipped bundle
 
-## 🛠️ Available Scripts
+## Available Scripts
 
 ```bash
 # Development
@@ -45,28 +45,28 @@ npm run test:e2e      # End-to-end tests (Playwright)
 npm run test:e2e:ui   # E2E tests with UI
 ```
 
-## 🏗️ Tech Stack
+## 🏗Tech Stack
 
 **Core**: Vue 3, TypeScript, Vuex 4, Vite  
 **Testing**: Vitest, Playwright, Vue Test Utils  
 **Quality**: ESLint, Prettier, Husky, lint-staged  
 **CI/CD**: GitHub Actions with automated testing and deployment
 
-## 📦 Performance Metrics
+## Performance Metrics
 
 - **Bundle Size**: 103KB JS, 23KB CSS (~41KB gzipped total)
 - **Lighthouse**: 100 Performance, 94 Accessibility, 100 Best Practices
 - **Load Times**: 0.4s First/Largest Contentful Paint
 - **Build Time**: <1 second
 
-## ♿ Accessibility Features
+## Accessibility Features
 
 - **WCAG 2.1 AA Compliant**: Keyboard navigation, screen readers, ARIA labels
 - **High Contrast Mode**: Toggle for enhanced visibility
 - **Focus Management**: Clear indicators and logical tab order
 - **Live Announcements**: Race status updates for screen readers
 
-## 🧪 Testing Strategy
+## Testing Strategy
 
 **Unit Tests**: Sound manager, Vuex store, component logic (206 tests)  
 **Component Tests**: User interactions, accessibility features, keyboard navigation  
@@ -80,7 +80,7 @@ npm run test:e2e:ui   # E2E tests with UI
 - ConfettiEffect: 100% statements, 85% functions
 - Sound Manager: 92% coverage with Web Audio API testing
 
-## 🏛️ Project Structure
+## Project Structure
 
 ```
 src/
@@ -97,13 +97,13 @@ tests/
 .github/workflows/       # CI/CD pipeline
 ```
 
-## 🎮 How to Play
+## How to Play
 
 1. **Generate Schedule** → **Start Race** → **Control with Pause/Resume**
 2. **Toggle Features**: Sound effects and high contrast mode
 3. **View Results**: Podium display and detailed race statistics
 
-## 🚀 CI/CD Pipeline
+## CI/CD Pipeline
 
 Automated GitHub Actions workflow:
 
