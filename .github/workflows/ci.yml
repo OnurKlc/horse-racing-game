@@ -156,7 +156,7 @@ jobs:
         run: npm ci
 
       - name: Build for production
-        run: npm run build
+        run: npx vite build --base=/horse-racing-game/
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
