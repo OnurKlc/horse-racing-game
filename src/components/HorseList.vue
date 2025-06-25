@@ -201,10 +201,22 @@ export default {
   border: 2px solid #ffffff;
 }
 
+:global(body.high-contrast) .horse-list h3 {
+  color: #ffffff !important;
+}
+
 :global(body.high-contrast) .horse-card {
   background-color: #000000;
-  color: #ffffff;
+  color: #ffffff !important;
   border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .horse-details h4 {
+  color: #ffffff !important;
+}
+
+:global(body.high-contrast) .condition-label {
+  color: #ffffff !important;
 }
 
 :global(body.high-contrast) .horse-card:focus {

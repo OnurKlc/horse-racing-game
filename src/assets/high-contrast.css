@@ -72,6 +72,61 @@ body.high-contrast .horse-list {
   border: 2px solid #ffffff !important;
 }
 
+/* Fix main app header in high contrast mode */
+body.high-contrast #app {
+  background: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast header {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-bottom: 2px solid #ffffff !important;
+}
+
+body.high-contrast header h1 {
+  color: #ffffff !important;
+}
+
+body.high-contrast header p {
+  color: #ffffff !important;
+}
+
+/* Fix table hover states in high contrast mode */
+body.high-contrast .results-table tr:hover {
+  background-color: #000080 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast .results-table tr:hover td {
+  color: #ffffff !important;
+}
+
+/* Fix horse card hover states in high contrast mode */
+body.high-contrast .horse-card:hover {
+  background-color: #000080 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .horse-card:hover .horse-details h4,
+body.high-contrast .horse-card:hover .condition-label {
+  color: #ffffff !important;
+}
+
+/* Fix race item hover states in high contrast mode */
+body.high-contrast .race-item:hover {
+  background-color: #000080 !important;
+  color: #ffffff !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .race-item:hover h4,
+body.high-contrast .race-item:hover p,
+body.high-contrast .race-item:hover .horse-name {
+  color: #ffffff !important;
+}
+
 body.high-contrast .horse-card {
   background-color: #000000 !important;
   color: #ffffff !important;
@@ -90,8 +145,8 @@ body.high-contrast .horse-card.racing {
 }
 
 body.high-contrast .condition-progress {
-  background-color: #808080 !important;
-  border: 1px solid #ffffff !important;
+  background-color: #000000 !important;
+  border: 2px solid #ffffff !important;
 }
 
 /* Race Track styles */
@@ -118,8 +173,8 @@ body.high-contrast .lane:focus {
 }
 
 body.high-contrast .track-surface {
-  background: #808080 !important;
-  border: 1px solid #ffffff !important;
+  background: #000000 !important;
+  border: 2px solid #ffffff !important;
 }
 
 body.high-contrast .horse-info {
@@ -173,7 +228,7 @@ body.high-contrast .race-info {
 }
 
 body.high-contrast .current-round {
-  background-color: #808080 !important;
+  background-color: #000000 !important;
   color: #ffffff !important;
   border: 2px solid #ffffff !important;
 }
@@ -256,7 +311,7 @@ body.high-contrast .results-table {
 }
 
 body.high-contrast .results-table th {
-  background-color: #808080 !important;
+  background-color: #000000 !important;
   color: #ffffff !important;
   border-bottom: 2px solid #ffffff !important;
 }
@@ -295,5 +350,37 @@ body.high-contrast .position-3 {
 }
 
 body.high-contrast .color-indicator {
+  border: 2px solid #ffffff !important;
+}
+
+/* Override all grey text colors with proper high contrast colors */
+body.high-contrast h1,
+body.high-contrast h2,
+body.high-contrast h3,
+body.high-contrast h4,
+body.high-contrast h5,
+body.high-contrast h6 {
+  color: #ffffff !important;
+}
+
+body.high-contrast p,
+body.high-contrast span,
+body.high-contrast div {
+  color: #ffffff !important;
+}
+
+/* Specific overrides for commonly used grey colors */
+body.high-contrast .horse-name,
+body.high-contrast .condition-label,
+body.high-contrast .horse-stats,
+body.high-contrast .horse-stats span {
+  color: #ffffff !important;
+}
+
+/* Fix any remaining grey backgrounds */
+body.high-contrast .podium-place,
+body.high-contrast .horse-circle {
+  background-color: #000000 !important;
+  color: #ffffff !important;
   border: 2px solid #ffffff !important;
 }

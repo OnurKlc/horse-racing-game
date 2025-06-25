@@ -241,10 +241,26 @@ export default {
   color: #ffffff;
 }
 
+:global(body.high-contrast) .race-schedule h3 {
+  color: #ffffff !important;
+}
+
 :global(body.high-contrast) .race-item {
   background-color: #000000;
-  color: #ffffff;
+  color: #ffffff !important;
   border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .race-item h4 {
+  color: #ffffff !important;
+}
+
+:global(body.high-contrast) .race-item p {
+  color: #ffffff !important;
+}
+
+:global(body.high-contrast) .horse-name {
+  color: #ffffff !important;
 }
 
 :global(body.high-contrast) .race-item:focus {

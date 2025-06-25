@@ -420,6 +420,14 @@ export default {
   border: 2px solid #ffffff;
 }
 
+:global(body.high-contrast) .results h3 {
+  color: #ffffff !important;
+}
+
+:global(body.high-contrast) .race-result h4 {
+  color: #ffffff !important;
+}
+
 :global(body.high-contrast) .podium-place:focus {
   outline: 4px solid #ffff00;
   outline-offset: 2px;
@@ -433,13 +441,15 @@ export default {
 }
 
 :global(body.high-contrast) .results-table th {
-  background-color: #808080;
-  color: #ffffff;
+  background-color: #000000;
+  color: #ffffff !important;
+  border: 2px solid #ffffff;
   border-bottom: 2px solid #ffffff;
 }
 
 :global(body.high-contrast) .results-table td {
   border-bottom: 1px solid #ffffff;
+  color: #ffffff;
 }
 
 :global(body.high-contrast) .results-table tr:focus {
@@ -473,6 +483,34 @@ export default {
 
 :global(body.high-contrast) .color-indicator {
   border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .podium-place {
+  background-color: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+}
+
+:global(body.high-contrast) .horse-circle {
+  background-color: #ffffff;
+  color: #000000;
+  border: 2px solid #000000;
+}
+
+:global(body.high-contrast) .horse-name {
+  color: #ffffff !important;
+}
+
+:global(body.high-contrast) .horse-stats {
+  color: #ffffff !important;
+}
+
+:global(body.high-contrast) .horse-stats span {
+  color: #ffffff !important;
+}
+
+:global(body.high-contrast) .place-info {
+  color: #ffffff;
 }
 
 /* Reduced motion support */
