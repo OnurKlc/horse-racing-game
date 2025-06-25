@@ -9,66 +9,66 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
         node-version: [18.x, 20.x]
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Run linting
       run: npm run lint:check
-    
+
     - name: Run type checking
       run: npm run type-check
-    
+
     - name: Run unit tests
       run: npm run test:run
-    
+
     - name: Run unit tests with coverage
       run: npm run test:coverage
-    
+
     - name: Upload coverage reports
       uses: codecov/codecov-action@v4
       with:
         file: ./coverage/lcov.info
         flags: unittests
         name: codecov-umbrella
-    
+
     - name: Build application
       run: npm run build
 
   e2e-tests:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Use Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: 20.x
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
-    
+
     - name: Run Playwright tests
       run: npm run test:e2e
-    
+
     - name: Upload Playwright Report
       uses: actions/upload-artifact@v4
       if: always()
@@ -79,28 +79,28 @@ jobs:
 
   accessibility-test:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Use Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: 20.x
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Build application
       run: npm run build
-    
+
     - name: Install Playwright
       run: npx playwright install --with-deps chromium
-    
+
     - name: Run accessibility tests
       run: npx playwright test tests/e2e/accessibility.spec.ts --project=chromium
-    
+
     - name: Upload accessibility report
       uses: actions/upload-artifact@v4
       if: always()
@@ -111,22 +111,22 @@ jobs:
 
   security-scan:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
-    
+
     - name: Use Node.js 20.x
       uses: actions/setup-node@v4
       with:
         node-version: 20.x
         cache: 'npm'
-    
+
     - name: Install dependencies
       run: npm ci
-    
+
     - name: Run security audit (informational)
       run: npm audit --audit-level moderate || true
-    
+
     - name: Check for high severity vulnerabilities
       run: npm audit --audit-level high --production || echo "Security audit completed with warnings"
 
@@ -134,24 +134,38 @@ jobs:
     needs: [test, e2e-tests, accessibility-test, security-scan]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-    
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Use Node.js 20.x
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20.x
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Build for production
-      run: npm run build
-    
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build for production
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
