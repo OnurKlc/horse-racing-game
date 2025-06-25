@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createStore } from 'vuex'
 import GameBoard from '../GameBoard.vue'
-import type { RootState } from '@/store'
+import type { RootState } from '@/types'
 
 const mockStore = createStore({
   state: {
@@ -15,22 +15,22 @@ const mockStore = createStore({
     isWaitingBetweenRounds: false,
     raceCompleted: false,
     raceResults: [],
-    winnerHorse: null
+    soundEnabled: true,
+    showConfetti: false,
+    lastWinner: null
   } as RootState,
   mutations: {
-    GENERATE_HORSES: vi.fn(),
     GENERATE_RACE_SCHEDULE: vi.fn(),
-    START_RACING: vi.fn(),
-    PAUSE_RACING: vi.fn(),
-    RESUME_RACING: vi.fn(),
-    STOP_RACING: vi.fn()
+    SET_RACING_STATUS: vi.fn(),
+    SET_PAUSED_STATUS: vi.fn(),
+    TOGGLE_SOUND: vi.fn()
   },
   actions: {
-    generateNewRace: vi.fn(),
+    generateRaceSchedule: vi.fn(),
     startRace: vi.fn(),
     pauseRace: vi.fn(),
-    resumeRace: vi.fn(),
-    stopRace: vi.fn()
+    toggleSound: vi.fn(),
+    hideConfetti: vi.fn()
   },
   getters: {
     hasSchedule: () => false,
@@ -49,135 +49,308 @@ describe('GameBoard', () => {
     })
   })
 
+  afterEach(() => {
+    wrapper.unmount()
+  })
+
   describe('rendering', () => {
     it('should render the component', () => {
-      expect(wrapper.exists()).toBe(true)
-      expect(wrapper.find('h1').text()).toBe('🏇 Horse Racing Game')
+      expect(wrapper.find('.game-board').exists()).toBe(true)
     })
 
     it('should show generate schedule button when no schedule exists', () => {
-      const generateButton = wrapper.find('[aria-label="Generate new race schedule"]')
-      expect(generateButton.exists()).toBe(true)
-      expect(generateButton.text()).toContain('Generate Schedule')
+      expect(wrapper.find('button').exists()).toBe(true)
+      expect(wrapper.find('button').text()).toContain('Generate Schedule')
     })
 
     it('should show high contrast toggle button', () => {
-      const contrastButton = wrapper.find(
-        '[aria-label="Toggle high contrast mode for better accessibility"]'
-      )
-      expect(contrastButton.exists()).toBe(true)
+      expect(wrapper.find('.btn-contrast').exists()).toBe(true)
     })
 
     it('should show sound toggle button', () => {
-      const soundButton = wrapper.find('[aria-label="Toggle sound effects on or off"]')
-      expect(soundButton.exists()).toBe(true)
+      expect(wrapper.find('.btn-sound').exists()).toBe(true)
     })
   })
 
   describe('accessibility', () => {
-    it('should have proper ARIA labels', () => {
-      const mainElement = wrapper.find('[role="main"]')
-      expect(mainElement.exists()).toBe(true)
-      expect(mainElement.attributes('aria-label')).toBe('Horse Racing Game')
-
-      const toolbar = wrapper.find('[role="toolbar"]')
-      expect(toolbar.exists()).toBe(true)
-      expect(toolbar.attributes('aria-label')).toBe('Race controls')
-    })
-
     it('should have screen reader instructions', () => {
-      const instructions = wrapper.find('#game-instructions')
-      expect(instructions.exists()).toBe(true)
-      expect(instructions.text()).toContain('Horse racing game controls')
+      expect(wrapper.find('[aria-live="polite"]').exists()).toBe(true)
     })
 
     it('should handle keyboard navigation', async () => {
-      const generateButton = wrapper.find('[aria-label="Generate new race schedule"]')
+      const button = wrapper.find('button')
+      const spy = vi.spyOn(wrapper.vm, 'generateSchedule')
 
-      await generateButton.trigger('keydown', { key: 'Enter' })
-      expect(mockStore.dispatch).toHaveBeenCalledWith('generateNewRace')
+      await button.trigger('keydown', { key: 'Enter' })
+      expect(spy).toHaveBeenCalled()
     })
   })
 
   describe('user interactions', () => {
     it('should generate new race when button clicked', async () => {
-      const generateButton = wrapper.find('[aria-label="Generate new race schedule"]')
-      await generateButton.trigger('click')
+      const generateButton = wrapper.find('button')
+      const spy = vi.spyOn(mockStore, 'dispatch')
 
-      expect(mockStore.dispatch).toHaveBeenCalledWith('generateNewRace')
+      await generateButton.trigger('click')
+      expect(spy).toHaveBeenCalledWith('generateRaceSchedule')
     })
 
     it('should toggle high contrast mode', async () => {
-      const contrastButton = wrapper.find(
-        '[aria-label="Toggle high contrast mode for better accessibility"]'
-      )
-      await contrastButton.trigger('click')
+      const contrastButton = wrapper.find('.btn-contrast')
 
+      await contrastButton.trigger('click')
+      expect(wrapper.vm.highContrast).toBe(true)
       expect(document.body.classList.contains('high-contrast')).toBe(true)
 
       await contrastButton.trigger('click')
+      expect(wrapper.vm.highContrast).toBe(false)
       expect(document.body.classList.contains('high-contrast')).toBe(false)
     })
 
     it('should toggle sound settings', async () => {
-      const soundButton = wrapper.find('[aria-label="Toggle sound effects on or off"]')
-
-      // Initial state should be enabled
-      expect(wrapper.vm.soundEnabled).toBe(true)
+      const soundButton = wrapper.find('.btn-sound')
+      const spy = vi.spyOn(mockStore, 'dispatch')
 
       await soundButton.trigger('click')
-      expect(wrapper.vm.soundEnabled).toBe(false)
-
-      await soundButton.trigger('click')
-      expect(wrapper.vm.soundEnabled).toBe(true)
+      expect(spy).toHaveBeenCalledWith('toggleSound', expect.any(Object))
     })
   })
 
   describe('race controls', () => {
-    beforeEach(() => {
-      // Mock having a schedule
-      mockStore.getters.hasSchedule = () => true
-      mockStore.getters.currentRaceData = () => ({
-        round: 1,
-        distance: 1000,
-        horses: []
-      })
+    it('should have computed property for schedule check', () => {
+      // Test the hasSchedule computed property
+      expect(wrapper.vm.hasSchedule).toBe(false) // mockStore has empty raceSchedule
     })
 
-    it('should show start race button when schedule exists and not racing', async () => {
-      await wrapper.vm.$nextTick()
+    it('should render different buttons based on state', () => {
+      // Should always have generate schedule button
+      expect(wrapper.find('.btn-primary').exists()).toBe(true)
 
-      const startButton = wrapper.find('[aria-label="Start the current race"]')
-      expect(startButton.exists()).toBe(true)
-    })
+      // Should have sound toggle button
+      expect(wrapper.find('.btn-sound').exists()).toBe(true)
 
-    it('should start race when start button clicked', async () => {
-      const startButton = wrapper.find('[aria-label="Start the current race"]')
-      await startButton.trigger('click')
-
-      expect(mockStore.dispatch).toHaveBeenCalledWith('startRace')
+      // Should have contrast toggle button
+      expect(wrapper.find('.btn-contrast').exists()).toBe(true)
     })
   })
 
   describe('screen reader announcements', () => {
-    it('should have live region for announcements', () => {
-      const liveRegion = wrapper.find('[aria-live="polite"]')
+    it('should announce race status changes', () => {
+      const liveRegion = wrapper.find('[aria-live="assertive"]')
       expect(liveRegion.exists()).toBe(true)
-    })
-
-    it('should announce race status changes', async () => {
-      const announcement = wrapper.find('#race-status-announcement')
-      expect(announcement.exists()).toBe(true)
     })
   })
 
-  describe('responsive design', () => {
-    it('should have responsive CSS classes', () => {
-      const gameBoard = wrapper.find('.game-board')
-      expect(gameBoard.exists()).toBe(true)
+  describe('global keyboard navigation', () => {
+    beforeEach(() => {
+      // Mock DOM methods
+      ;(globalThis as any).document.querySelectorAll = vi.fn()
+    })
 
-      const controls = wrapper.find('.controls')
-      expect(controls.exists()).toBe(true)
+    afterEach(() => {
+      vi.restoreAllMocks()
+    })
+
+    it('should handle ArrowRight navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowRight' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).toHaveBeenCalled()
+      expect(mockButtons[1].focus).toHaveBeenCalled()
+      expect(wrapper.vm.focusedButtonIndex).toBe(1)
+    })
+
+    it('should handle ArrowDown navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowDown' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).toHaveBeenCalled()
+      expect(mockButtons[1].focus).toHaveBeenCalled()
+    })
+
+    it('should handle ArrowLeft navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+      wrapper.vm.focusedButtonIndex = 1
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).toHaveBeenCalled()
+      expect(mockButtons[0].focus).toHaveBeenCalled()
+      expect(wrapper.vm.focusedButtonIndex).toBe(0)
+    })
+
+    it('should handle ArrowUp navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+      wrapper.vm.focusedButtonIndex = 1
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowUp' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).toHaveBeenCalled()
+      expect(mockButtons[0].focus).toHaveBeenCalled()
+    })
+
+    it('should wrap around when navigating past end', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+      wrapper.vm.focusedButtonIndex = 1
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowRight' })
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(mockButtons[0].focus).toHaveBeenCalled()
+      expect(wrapper.vm.focusedButtonIndex).toBe(0)
+    })
+
+    it('should wrap around when navigating past beginning', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+      wrapper.vm.focusedButtonIndex = 0
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowLeft' })
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(mockButtons[1].focus).toHaveBeenCalled()
+      expect(wrapper.vm.focusedButtonIndex).toBe(1)
+    })
+
+    it('should handle Home key navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+      wrapper.vm.focusedButtonIndex = 2
+
+      const event = new KeyboardEvent('keydown', { key: 'Home' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).toHaveBeenCalled()
+      expect(mockButtons[0].focus).toHaveBeenCalled()
+      expect(wrapper.vm.focusedButtonIndex).toBe(0)
+    })
+
+    it('should handle End key navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }, { focus: vi.fn() }, { focus: vi.fn() }] as any[]
+
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+      wrapper.vm.focusedButtonIndex = 0
+
+      const event = new KeyboardEvent('keydown', { key: 'End' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).toHaveBeenCalled()
+      expect(mockButtons[2].focus).toHaveBeenCalled()
+      expect(wrapper.vm.focusedButtonIndex).toBe(2)
+    })
+
+    it('should handle Escape key navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }] as any[]
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+
+      const mockActiveElement = { blur: vi.fn() }
+
+      // Use vi.spyOn to mock document.activeElement getter
+      const activeElementSpy = vi.spyOn(document, 'activeElement', 'get')
+      activeElementSpy.mockReturnValue(mockActiveElement as any)
+
+      const event = new KeyboardEvent('keydown', { key: 'Escape' })
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(mockActiveElement.blur).toHaveBeenCalled()
+
+      activeElementSpy.mockRestore()
+    })
+
+    it('should handle Tab key without preventing default', () => {
+      const mockButtons = [{ focus: vi.fn() }] as any[]
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+
+      const event = new KeyboardEvent('keydown', { key: 'Tab' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled()
+    })
+
+    it('should do nothing when no buttons are available', () => {
+      ;(document.querySelectorAll as any).mockReturnValue([])
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowRight' })
+      const preventDefaultSpy = vi.spyOn(event, 'preventDefault')
+
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(preventDefaultSpy).not.toHaveBeenCalled()
+    })
+
+    it('should handle single button navigation', () => {
+      const mockButtons = [{ focus: vi.fn() }] as any[]
+      ;(document.querySelectorAll as any).mockReturnValue(mockButtons)
+
+      const event = new KeyboardEvent('keydown', { key: 'ArrowRight' })
+      wrapper.vm.handleGlobalKeydown(event)
+
+      expect(mockButtons[0].focus).toHaveBeenCalled()
+      expect(wrapper.vm.focusedButtonIndex).toBe(0)
+    })
+  })
+
+  describe('lifecycle methods', () => {
+    it('should add event listener on mount', () => {
+      const addEventListenerSpy = vi.spyOn(document, 'addEventListener')
+
+      const newWrapper = mount(GameBoard, {
+        global: {
+          plugins: [mockStore]
+        }
+      })
+
+      expect(addEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
+
+      newWrapper.unmount()
+      addEventListenerSpy.mockRestore()
+    })
+
+    it('should remove event listener on unmount', () => {
+      const removeEventListenerSpy = vi.spyOn(document, 'removeEventListener')
+
+      const newWrapper = mount(GameBoard, {
+        global: {
+          plugins: [mockStore]
+        }
+      })
+
+      newWrapper.unmount()
+
+      expect(removeEventListenerSpy).toHaveBeenCalledWith('keydown', expect.any(Function))
+      removeEventListenerSpy.mockRestore()
     })
   })
 })

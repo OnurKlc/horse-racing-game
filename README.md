@@ -22,7 +22,7 @@ npm run test         # Run tests
 - **Accessibility**: WCAG 2.1 AA compliant with keyboard navigation, screen readers, high contrast mode
 - **Sound Effects**: Race audio with Web Audio API and toggle controls
 - **TypeScript**: Full type safety across components and store
-- **Testing**: Unit, component, and E2E tests with 90%+ coverage
+- **Testing**: Unit, component, and E2E tests with 70% overall coverage (96% components)
 - **Performance**: 100/100 Lighthouse score, ~41KB gzipped bundle
 
 ## 🛠️ Available Scripts
@@ -68,10 +68,17 @@ npm run test:e2e:ui   # E2E tests with UI
 
 ## 🧪 Testing Strategy
 
-**Unit Tests**: Sound manager, Vuex store, component logic  
-**Component Tests**: User interactions, accessibility features  
+**Unit Tests**: Sound manager, Vuex store, component logic (206 tests)  
+**Component Tests**: User interactions, accessibility features, keyboard navigation  
 **E2E Tests**: Cross-browser workflows, WCAG compliance, performance  
-**Coverage**: 90%+ statements, branches, functions, and lines
+**Coverage**: 70% overall, 96% components, 92% utils, 85% branches
+
+**Detailed Coverage by Component:**
+
+- HorseList, RaceTrack, Results, RaceSchedule: 100% coverage
+- GameBoard: 93% coverage with full keyboard navigation
+- ConfettiEffect: 100% statements, 85% functions
+- Sound Manager: 92% coverage with Web Audio API testing
 
 ## 🏛️ Project Structure
 
@@ -105,7 +112,3 @@ Automated GitHub Actions workflow:
 - Unit and E2E test execution with coverage
 - Accessibility compliance verification
 - Automated deployment to GitHub Pages
-
----
-
-**Built for frontend developer excellence with modern web standards and comprehensive accessibility support.**
